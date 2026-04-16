@@ -210,5 +210,4 @@ creds.txt
 notebooks/
 local_s3/
 mlops_capstone_project/
-data/
 models/
