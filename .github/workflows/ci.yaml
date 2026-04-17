@@ -88,6 +88,19 @@ jobs:
         run: |
           aws eks update-kubeconfig --region us-east-1 --name flask-app-cluster
 
+      - name: Attach ECR policy to Node Group Role
+        run: |
+          NODE_ROLE=$(aws eks describe-nodegroup \
+          --cluster-name flask-app-cluster \
+          --nodegroup-name flask-app-nodes \
+          --region ${{ secrets.AWS_REGION }} \
+          --query "nodegroup.nodeRole" \
+          --output text | awk -F'/' '{print $NF}')
+        
+          aws iam attach-role-policy \
+          --role-name $NODE_ROLE \
+          --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+
       - name: Create Kubernetes Secret
         run: |
           kubectl create secret generic capstone-secret \
